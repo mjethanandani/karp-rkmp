@@ -41,8 +41,6 @@ clean:
 	-rm -f $(draft)-[0-9][0-9].html
 	-rm -f $(draft)-[0-9][0-9].xml
 	-rm -f $(draft)-[0-9][0-9].xml[~]
-	-rm ../src/yang/*\@$(shell date +%Y)-*-*-tree.txt
-	-rm ../src/yang/*\@$(shell date +%Y)-*-*.yang
 ifeq (md,$(draft_type))
 	-rm -f $(draft).xml
 
@@ -51,15 +49,8 @@ ifeq (org,$(draft_type))
 	-rm -f $(draft).xml
 endif
 
-$(next).xml: $(draft).xml ../src/yang/ietf-access-control-list.yang ../src/yang/ietf-packet-fields.yang ../src/yang/example-newco-acl.yang ../src/yang/ietf-ethertypes.yang
+$(next).xml: $(draft).xml 
 	sed -e"s/$(basename $<)-latest/$(basename $@)/" -e"s/YYYY-MM-DD/$(shell date +%Y-%m-%d)/" $< > $@
-	sed -e"s/YYYY-MM-DD/$(shell date +%Y-%m-%d)/" ../src/yang/ietf-access-control-list.yang > ../src/yang/ietf-access-control-list\@$(shell date +%Y-%m-%d).yang
-	sed -e"s/YYYY-MM-DD/$(shell date +%Y-%m-%d)/" ../src/yang/ietf-packet-fields.yang > ../src/yang/ietf-packet-fields\@$(shell date +%Y-%m-%d).yang
-	sed -e"s/YYYY-MM-DD/$(shell date +%Y-%m-%d)/" ../src/yang/example-newco-acl.yang > ../src/yang/example-newco-acl\@$(shell date +%Y-%m-%d).yang
-	sed -e"s/YYYY-MM-DD/$(shell date +%Y-%m-%d)/" ../src/yang/ietf-ethertypes.yang > ../src/yang/ietf-ethertypes\@$(shell date +%Y-%m-%d).yang
-
-	cd ../src; ./validate-and-gen-trees.sh; cd ..;
-	../src/insert-figures.sh $@ > tmp; mv tmp $@
 
 .INTERMEDIATE: $(draft).xml
 %.xml: %.md
